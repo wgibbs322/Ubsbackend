@@ -2,30 +2,40 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import transactionRoutes from './Routes/Routes.js';
+import userRoutes from './Routes/Routes.js';
 import bodyParser from 'body-parser';
-
-import corsOptions from './corsConfig.js';
-
-import transactionRoutes from './Routes/transactionRoutes.js';
-import userRoutes from './Routes/userRoutes.js';
+import corsOptions from './corsConfig.js'; // Import the CORS configuration
 import transferRoutes from './Routes/transferRoutes.js';
-import softcodeRoutes from './Routes/softcodeRoutes.js';
+import softcodeRoutes from './Routes/softcodeRoutes.js'
 import addExternalTransactionRoutes from './Routes/externalTransactionRoutes.js';
+
 
 dotenv.config();
 
 const app = express();
 
-// Middleware
+// Middleware for parsing JSON
 app.use(bodyParser.json());
-app.use(cors(corsOptions));
+
+// CORS Configuration
+// const corsOptions = {
+//     origin: '*', // Allow requests from any origin
+//     credentials: true,
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+// };
+
+app.use(cors(corsOptions)); // Apply the CORS middleware
 
 // Routes
-app.use('/api/transactions', transactionRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/transfer', transferRoutes);
-app.use('/api/softcode', softcodeRoutes);
+app.use('/api', transactionRoutes);  // Handles transactions
+app.use('/api/users', userRoutes);   // Handles user-related operations
 
+// Routes
+app.use('/api/transfer', transferRoutes);
+
+app.use('/api/softcode', softcodeRoutes);
 
 // Routes
 app.use('/api', addExternalTransactionRoutes);
@@ -36,8 +46,8 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).json({ error: err.message || 'Internal Server Error' });
 });
 
-// Catch-All 404
-app.use((req, res) => {
+// Catch-All Route for Undefined Endpoints
+app.use((req, res, next) => {
     res.status(404).json({ error: 'Not Found' });
 });
 
@@ -46,11 +56,11 @@ mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-    .then(() => console.log('✅ MongoDB connected'))
-    .catch(error => console.error('❌ MongoDB connection error:', error));
+    .then(() => console.log('MongoDB connected'))
+    .catch(error => console.error('MongoDB connection error:', error));
 
-// Server Start
+// Start the Server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
