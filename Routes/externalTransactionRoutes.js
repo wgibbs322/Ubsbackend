@@ -7,6 +7,6 @@ import {
 const router = express.Router();
 
 router.post('/external-transactions', addExternalTransaction);
-router.get('/external-transactions', getExternalTransaction);
+router.get('/external-transactions',  getExternalTransaction);
 
 export default router;
