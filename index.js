@@ -38,7 +38,7 @@ app.use('/api/transfer', transferRoutes);
 app.use('/api/softcode', softcodeRoutes);
 
 // Routes
-app.use('/api', addExternalTransactionRoutes);
+app.use('/api/add', addExternalTransactionRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
